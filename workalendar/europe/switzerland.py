@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-from ..core import WesternCalendar, SUN
+from ..core import WesternCalendar, SUN, THU
 from ..registry_tools import iso_register
 
 
@@ -144,9 +144,18 @@ class Glarus(Switzerland):
     include_berchtolds_day = True
     include_all_saints = True
 
-    FIXED_HOLIDAYS = Switzerland.FIXED_HOLIDAYS + (
-        (4, 3, "Näfels Ride"),
-    )
+    def get_nafels_ride(self, year):
+        "First Thursday of April"
+        first_thursday = self.get_nth_weekday_in_month(year, 4, THU)
+        return (
+            first_thursday,
+            "Näfels Ride"
+        )
+
+    def get_variable_days(self, year):
+        days = super().get_variable_days(year)
+        days.append(self.get_nafels_ride(year))
+        return days
 
 
 @iso_register('CH-GR')
